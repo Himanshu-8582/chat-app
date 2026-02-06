@@ -106,7 +106,7 @@ const signUp = asyncHandler(async (req, res) => {
   }
 
   // Send response
-  res.status(201).json(
+  return res.status(201).json(
     new ApiResponse(201, "User registered successfully", {
       _id: savedUser._id,
       name: savedUser.fullName,
@@ -116,5 +116,40 @@ const signUp = asyncHandler(async (req, res) => {
   );
 });
 
+const login = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    throw new ApiError(400, "Email and password are required");
+  }
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new ApiError(401, "Invalid email or password");
+  }
 
-export { signUp };
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    throw new ApiError(401, "Invalid email or password");
+  }
+  generateToken(user._id, res);
+
+  return res.status(201).json(
+    new ApiResponse(201, "User login successfully", {
+      _id: user._id,
+      name: user.fullName,
+      email: user.email,
+      profilePic: user.profilePic,
+    }),
+  );
+});
+
+const logout = asyncHandler(async (_, res) => {
+  res.clearCookie("jwt", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+  });
+  return res.status(200).json(new ApiResponse(200, "User logged out successfully"));
+});
+
+
+export { signUp, login, logout };

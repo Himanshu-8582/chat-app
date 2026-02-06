@@ -1,13 +1,12 @@
 import express from 'express';
-import dotenv from 'dotenv';
-import connectDB from './src/db/db';
-dotenv.config();
+import connectDB from './src/db/db.js';
+import { ENV } from './src/utils/env.js';
 
 
 import authRoutes from './src/routes/auth.routes.js'
 
 const app = express();
-const PORT = process.env.PORT || 2000;
+const PORT = ENV.PORT || 2000;
 app.use(express.json()); // Middleware to parse JSON bodies
 
 

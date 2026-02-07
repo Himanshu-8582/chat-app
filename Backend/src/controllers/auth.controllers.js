@@ -6,6 +6,7 @@ import { generateToken } from "../utils/auth.util.js";
 import { sendWelcomeEmail } from "../emails/emailHandlers.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import { ENV } from "../utils/env.js";
+import cloudinary from "../utils/cloudinary.js";
 
 const signUp = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
@@ -151,5 +152,23 @@ const logout = asyncHandler(async (_, res) => {
   return res.status(200).json(new ApiResponse(200, "User logged out successfully"));
 });
 
+const updateProfile = asyncHandler(async (req, res) => {
+  const { profilePic } = req.body;
+  if(!profilePic) {
+    throw new ApiError(400, "Profile picture URL is required");
+  }
 
-export { signUp, login, logout };
+  const userId = req.user._id;
+
+  const uploadResponse = await cloudinary.uploader.upload(profilePic);
+
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    { profilePic: uploadResponse.secure_url },
+    { new: true },
+  );
+
+  return new ApiResponse(200, "Profile updated successfully", updatedUser);
+});
+
+export { signUp, login, logout, updateProfile };

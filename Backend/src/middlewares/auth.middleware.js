@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import ApiError from "../utils/ApiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
+import jwt from 'jsonwebtoken';
 import { ENV } from "../utils/env.js";
 
 export const protectedRoute = asyncHandler(async (req, res, next) => {

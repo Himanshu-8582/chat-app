@@ -19,4 +19,8 @@ router.post('/logout', logout);
 // Protected route
 router.put('/update-profile',protectedRoute, updateProfile);
 
+router.get("/check", protectedRoute, (req, res) =>
+  res.status(200).json(req.user),
+);
+
 export default router;

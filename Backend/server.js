@@ -10,12 +10,18 @@ import messageRoutes from './src/routes/message.route.js'
 
 const app = express();
 const PORT = ENV.PORT || 2000;
-app.use(express.json()); // Middleware to parse JSON bodies
-app.use(cors({          // credentials true means allow cookies from frontend to backend
+
+app.use(
+  cors({
     origin: ENV.CLIENT_URL,
-    credentials: true
-}));
+    credentials: true,
+  }),
+);
+
+app.use(express.json({ limit: "20mb" }));
+app.use(express.urlencoded({ limit: "20mb", extended: true }));
 app.use(cookieParser());
+
 
 // Routes
 app.use('/api/auth', authRoutes);

@@ -5,11 +5,12 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { errorHandler } from './src/utils/errorHandler.js';
 import { app, server } from './src/utils/socket.js';
+// import path from 'path';
 
 import authRoutes from './src/routes/auth.routes.js'
 import messageRoutes from './src/routes/message.route.js'
 
-
+// const __dirname = path.resolve();
 const PORT = ENV.PORT || 2000;
 
 app.use(

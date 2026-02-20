@@ -3,6 +3,7 @@ import User from "../models/user.model.js";
 import Message from "../models/message.model.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import cloudinary from "../utils/cloudinary.js";
+import { getReceiverSocketId, io } from "../utils/socket.js";
 
 const getAllContacts = asyncHandler(async (req, res) => {
   const loggedInUserId = req.user._id;
@@ -93,7 +94,12 @@ const sendMessage = asyncHandler(async (req, res) => {
   });
   await newMessage.save();
 
-  // To do send message to user if he/she is online - ( we can done it by socket.IO )
+  // Send message to user if he/she is online - ( we can done it by socket.IO )
+  const receiverSocketId = getReceiverSocketId(receiverId);
+  if (receiverSocketId) {
+    io.to(receiverSocketId).emit('newMessage',newMessage);
+  }
+
 
   return res
     .status(200)
